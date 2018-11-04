@@ -2,12 +2,9 @@
 
 window.onload = init;
 
-let context;
-
 function init()
 {
-    context = new AudioContext();
-    soundInit(context);
+    soundInit();
     keyInit();
 }
 
@@ -15,9 +12,9 @@ function init()
 
 class Sound
 {
-    constructor(context, type, frequency)
+    constructor(type, frequency)
     {
-        this.context = context;
+        this.context = new AudioContext();
         this.type = type;
         this.frequency = frequency;
     }
@@ -56,8 +53,10 @@ let soundIndex = []; // this is a dictionary which to each keycode (key) associa
 
 function soundInit()
 {
-    addSoundToIndex(32, new Sound(context, "triangle", 261.6)); // This is a C note played on every spacebar press
-    addSoundToIndex(86, new Sound(context, "triangle", 440)); // This is a C note played on every spacebar press
+    addSoundToIndex(32, new Sound("triangle", 261.6)); // -
+    addSoundToIndex(67, new Sound("triangle", 293.665)); // C
+    addSoundToIndex(86, new Sound("triangle", 349.228)); // V
+    addSoundToIndex(66, new Sound("triangle", 440)); // B
 }
 
 function addSoundToIndex(key, sound)
