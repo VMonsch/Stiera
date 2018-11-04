@@ -19,12 +19,12 @@ class Sound
         this.frequency = frequency;
     }
 
-    start()
+    start(offset)
     {
         this.oscillator = this.context.createOscillator();
         this.gain = this.context.createGain();
         this.oscillator.type = this.type;
-        this.oscillator.frequency.value = this.frequency;
+        this.oscillator.frequency.value = this.frequency + offset;
 
         this.oscillator.connect(this.gain);
         this.gain.connect(this.context.destination);
@@ -64,13 +64,15 @@ function addSoundToIndex(key, sound)
     soundIndex[key] = sound; // This is a C note played on every spacebar press
 }
 
-function playSound(key) {
+function playSound(key, offset)
+{
     if (key in soundIndex) {
-        soundIndex[key].start();
+        soundIndex[key].start(offset);
     }
 }
 
-function stopSound(key) {
+function stopSound(key)
+{
     if (key in soundIndex) {
         soundIndex[key].stop();
     }
@@ -117,23 +119,49 @@ function playerInit() {
 
 //region Keys
 
-function keyInit() {
+function keyInit()
+{
     document.addEventListener('keydown', handleKeydown);
     document.addEventListener('keyup', handleKeyup);
 }
 
 let pressedKeys = [];
 
-function handleKeydown(event) {
+function handleKeydown(event)
+{
     let key = event.keyCode; // TODO change because of deprecation
 
-    if (!pressedKeys.includes(key)) {
+    if (!pressedKeys.includes(key))
+    {
+        event.preventDefault();
+
         pressedKeys.push(key);
-        playSound(key);
+        let offset = 0;
+
+        if (pressedKeys.includes(37)) // Left arrow
+        {
+            offset -= 10;
+        }
+        if (pressedKeys.includes(38)) // Up arrow
+        {
+            offset += 20;
+        }
+        if (pressedKeys.includes(39)) // Right arrow
+        {
+            offset += 10;
+        }
+        if (pressedKeys.includes(40)) // Down arrow
+        {
+            offset -= 20;
+        }
+
+        playSound(key, offset);
     }
 }
 
 function handleKeyup(event) {
+    event.preventDefault();
+
     let key = event.keyCode; // TODO change because of deprecation
 
     stopSound(key);
