@@ -22,12 +22,14 @@ class Sound
         this.context = new AudioContext();
         this.type = type;
         this.frequency = frequency;
+        this.volume = 1;
     }
 
     start(offset)
     {
         this.oscillator = this.context.createOscillator();
         this.gain = this.context.createGain();
+        this.gain.gain.value = this.volume;
         this.oscillator.type = this.type;
         this.oscillator.frequency.value = this.frequency + offset;
 
@@ -68,10 +70,12 @@ class Sound
 
     setVolume(volume)
     {
-        if (this.gain)
+        this.volume = volume;
+
+        if (this.gain && this.gain.gain.value !== 0.00001)
         {
-            //this.gain.gain.exponentialRampToValueAtTime(volume, this.context.currentTime + 1)
-            this.gain.gain.value = volume;
+            this.gain.gain.exponentialRampToValueAtTime(volume, this.context.currentTime + 1)
+            //this.gain.gain.value = volume;
         }
     }
 }
