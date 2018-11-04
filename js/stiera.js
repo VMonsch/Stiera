@@ -15,10 +15,9 @@ function init()
 
 class Sound
 {
-    constructor(context, key, type, frequency)
+    constructor(context, type, frequency)
     {
         this.context = context;
-        this.key = key;
         this.type = type;
         this.frequency = frequency;
     }
@@ -38,6 +37,9 @@ class Sound
     stop()
     {
         this.gain.gain.exponentialRampToValueAtTime(0.00001, this.context.currentTime + 1);
+        //this.gain.disconnect(this.context.destination);
+
+        //this.clear();
     }
 
     clear()
@@ -54,7 +56,8 @@ let soundIndex = []; // this is a dictionary which to each keycode (key) associa
 
 function soundInit()
 {
-    addSoundToIndex(32, new Sound(context, 32, "sine", 261.6)); // This is a C note played on every spacebar press
+    addSoundToIndex(32, new Sound(context, "triangle", 261.6)); // This is a C note played on every spacebar press
+    addSoundToIndex(86, new Sound(context, "triangle", 440)); // This is a C note played on every spacebar press
 }
 
 function addSoundToIndex(key, sound)
@@ -134,10 +137,8 @@ function handleKeydown(event) {
 function handleKeyup(event) {
     let key = event.keyCode; // TODO change because of deprecation
 
-    if (pressedKeys.includes(key)) {
-        stopSound(key);
-        pressedKeys.pop(key);
-    }
+    stopSound(key);
+    pressedKeys.pop(key);
 }
 
 /*function getKey(event) {
