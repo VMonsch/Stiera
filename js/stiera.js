@@ -1,12 +1,17 @@
 // Made by Victor Monsch
 
+//region Init
+
 window.onload = init;
 
 function init()
 {
     soundInit();
     keyInit();
+    changeInit();
 }
+
+//endregion
 
 //region Sounds
 
@@ -34,9 +39,6 @@ class Sound
     stop()
     {
         this.gain.gain.exponentialRampToValueAtTime(0.00001, this.context.currentTime + 1);
-        //this.gain.disconnect(this.context.destination);
-
-        //this.clear();
     }
 
     clear()
@@ -47,16 +49,41 @@ class Sound
 
         this.oscillator = null;
     }
+
+    setType(type) {
+        this.type = type;
+        if (this.oscillator)
+        {
+            this.oscillator.type = type;
+        }
+    }
+
+    setFrequency(frequency) {
+        this.frequency = frequency;
+        if (this.oscillator)
+        {
+            this.oscillator.frequency = frequency;
+        }
+    }
+
+    setVolume(volume)
+    {
+        if (this.gain)
+        {
+            //this.gain.gain.exponentialRampToValueAtTime(volume, this.context.currentTime + 1)
+            this.gain.gain.value = volume;
+        }
+    }
 }
 
 let soundIndex = []; // this is a dictionary which to each keycode (key) associates a sound object (value)
 
 function soundInit()
 {
-    addSoundToIndex(32, new Sound("triangle", 261.6)); // -
-    addSoundToIndex(67, new Sound("triangle", 293.665)); // C
-    addSoundToIndex(86, new Sound("triangle", 349.228)); // V
-    addSoundToIndex(66, new Sound("triangle", 440)); // B
+    addSoundToIndex(32, new Sound("sine", 261.6)); // -
+    addSoundToIndex(67, new Sound("sine", 293.665)); // C
+    addSoundToIndex(86, new Sound("sine", 349.228)); // V
+    addSoundToIndex(66, new Sound("sine", 440)); // B
 }
 
 function addSoundToIndex(key, sound)
@@ -78,43 +105,6 @@ function stopSound(key)
     }
 }
 
-
-//endregion
-
-//region Player
-
-/*
-let context;
-
-function playerInit() {
-    try {
-        window.AudioContext = window.AudioContext||window.webkitAudioContext;
-        context = new AudioContext();
-    }
-    catch(event) {
-        alert('We\'re using web audio... you\'re not. Please update your browser !');
-    }
-
-    var dogBarkingBuffer = null;
-
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    var context = new AudioContext();
-
-    function loadDogSound(url) {
-        var request = new XMLHttpRequest();
-        request.open('GET', url, true);
-        request.responseType = 'arraybuffer';
-
-        // Decode asynchronously
-        request.onload = function() {
-            context.decodeAudioData(request.response, function(buffer) {
-                dogBarkingBuffer = buffer;
-            }, onError);
-        }
-        request.send();
-    }
-}
-*/
 //endregion
 
 //region Keys
@@ -186,6 +176,52 @@ function handleKeyup(event) {
 
     return key;
 }*/
+
+//endregion
+
+//region Change
+
+function changeInit()
+{
+    document.getElementById("type").addEventListener("change", typeChange);
+    document.getElementById("volume").addEventListener("change", volumeChange);
+}
+
+function typeChange()
+{
+    let radios = document.getElementsByName("type");
+
+    radios.forEach(function(radio)
+    {
+        if (radio.checked)
+        {
+            updateType(radio.id)
+        }
+    });
+}
+
+function updateType(type)
+{
+    soundIndex.forEach(function(sound)
+    {
+        sound.setType(type);
+    });
+}
+
+function volumeChange()
+{
+    let slider = document.getElementById("volume");
+
+    updateVolume(slider.value);
+}
+
+function updateVolume(volume)
+{
+    soundIndex.forEach(function(sound)
+    {
+        sound.setVolume(volume);
+    });
+}
 
 //endregion
 
