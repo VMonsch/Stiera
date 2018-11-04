@@ -2,6 +2,7 @@
 
 //region Init
 
+
 window.onload = init;
 
 function init()
@@ -9,6 +10,10 @@ function init()
     soundInit();
     keyInit();
     changeInit();
+
+    document.getElementById("title").onclick = function() {
+        location.reload();
+    };
 }
 
 //endregion
@@ -22,25 +27,25 @@ class Sound
         this.context = new AudioContext();
         this.type = type;
         this.frequency = frequency;
-        this.volume = 1;
     }
 
     start(offset)
     {
         this.oscillator = this.context.createOscillator();
         this.gain = this.context.createGain();
-        this.gain.gain.value = this.volume;
+        this.gain.gain.value = 0.1;
         this.oscillator.type = this.type;
         this.oscillator.frequency.value = this.frequency + offset;
+        this.detune(getTune());
 
         this.oscillator.connect(this.gain);
         this.gain.connect(this.context.destination);
         this.oscillator.start();
     }
 
-    stop()
+    stop(echo)
     {
-        this.gain.gain.exponentialRampToValueAtTime(0.00001, this.context.currentTime + 1);
+        this.gain.gain.exponentialRampToValueAtTime(0.00001, this.context.currentTime + echo);
     }
 
     clear()
@@ -52,7 +57,8 @@ class Sound
         this.oscillator = null;
     }
 
-    setType(type) {
+    setType(type)
+    {
         this.type = type;
         if (this.oscillator)
         {
@@ -60,22 +66,12 @@ class Sound
         }
     }
 
-    setFrequency(frequency) {
-        this.frequency = frequency;
+    detune(tune)
+    {
         if (this.oscillator)
         {
-            this.oscillator.frequency = frequency;
-        }
-    }
-
-    setVolume(volume)
-    {
-        this.volume = volume;
-
-        if (this.gain && this.gain.gain.value !== 0.00001)
-        {
-            this.gain.gain.exponentialRampToValueAtTime(volume, this.context.currentTime + 1)
-            //this.gain.gain.value = volume;
+            //this.oscillator.detune.setValueAtTime(tune, this.context.currentTime + 1);
+            this.oscillator.detune.value = +tune;
         }
     }
 }
@@ -102,10 +98,10 @@ function playSound(key, offset)
     }
 }
 
-function stopSound(key)
+function stopSound(key, echo)
 {
     if (key in soundIndex) {
-        soundIndex[key].stop();
+        soundIndex[key].stop(echo);
     }
 }
 
@@ -125,10 +121,12 @@ function handleKeydown(event)
 {
     let key = event.keyCode; // TODO change because of deprecation
 
+    if (!soundIndex[key] == undefined) {
+        event.preventDefault();
+    }
+
     if (!pressedKeys.includes(key))
     {
-        event.preventDefault();
-
         pressedKeys.push(key);
         let offset = 0;
 
@@ -154,32 +152,13 @@ function handleKeydown(event)
 }
 
 function handleKeyup(event) {
-    event.preventDefault();
+    //event.preventDefault();
 
     let key = event.keyCode; // TODO change because of deprecation
 
-    stopSound(key);
-    pressedKeys.pop(key);
+    stopSound(key, getEcho());
+    pressedKeys.pop(); // TODO figure out why delete does not work
 }
-
-/*function getKey(event) {
-    let key;
-
-    if (event.key !== undefined)
-    {
-        key = event.key;
-    }
-    else if (event.keyIdentifier !== undefined)
-    {
-        key = event.keyIdentifier;
-    }
-    else if (event.keyCode !== undefined)
-    {
-        key = event.keyCode;
-    }
-
-    return key;
-}*/
 
 //endregion
 
@@ -188,20 +167,13 @@ function handleKeyup(event) {
 function changeInit()
 {
     document.getElementById("type").addEventListener("change", typeChange);
-    document.getElementById("volume").addEventListener("change", volumeChange);
+    document.getElementById("tune").addEventListener("change", tuneChange);
+    document.getElementById("echo").addEventListener("change", echoChange);
 }
 
 function typeChange()
 {
-    let radios = document.getElementsByName("type");
-
-    radios.forEach(function(radio)
-    {
-        if (radio.checked)
-        {
-            updateType(radio.id)
-        }
-    });
+    updateType(getType());
 }
 
 function updateType(type)
@@ -212,19 +184,59 @@ function updateType(type)
     });
 }
 
-function volumeChange()
-{
-    let slider = document.getElementById("volume");
+function getType() {
+    let radios = document.getElementsByName("type");
+    let value = "sine";
 
-    updateVolume(slider.value);
+    radios.forEach(function(radio)
+    {
+        if (radio.checked)
+        {
+            value = radio.value;
+        }
+    });
+
+    return value;
 }
 
-function updateVolume(volume)
+function tuneChange()
+{
+    updateTune(getTune())
+}
+
+function updateTune(tune)
 {
     soundIndex.forEach(function(sound)
     {
-        sound.setVolume(volume);
+        sound.detune(tune);
     });
+}
+
+function getTune()
+{
+    let slider = document.getElementById("tune");
+
+    return parseFloat(slider.value);
+}
+
+function echoChange()
+{
+    updateEcho(getEcho())
+}
+
+function updateEcho(echo)
+{
+    soundIndex.forEach(function(sound)
+    {
+
+    });
+}
+
+function getEcho()
+{
+    let slider = document.getElementById("echo");
+
+    return parseFloat(slider.value);
 }
 
 //endregion

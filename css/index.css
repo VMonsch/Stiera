@@ -1,7 +1,12 @@
+*
+{
+    color: white;
+    vertical-align: middle;
+}
+
 body
 {
     height: 90vh;
-    color: #fff;
     background: linear-gradient(-45deg, #EE7752, #E73C7E, #d59056, #d5c538);
     background-size: 400% 400%;
     -webkit-animation: Gradient 15s ease infinite;
@@ -18,7 +23,7 @@ body, h1
 .top
 {
     position: absolute;
-    top: 1%;
+    top: 2%;
 }
 
 .middle
@@ -30,7 +35,7 @@ body, h1
 .bottom
 {
     position: absolute;
-    top: 95%;
+    top: 92%;
 }
 
 .centered
@@ -42,8 +47,8 @@ body, h1
 
 label
 {
-    margin-right: 15px;
-    line-height: 32px;
+    /*margin-right: 15px;
+    line-height: 32px;*/
 }
 
 input[type=radio]
@@ -58,12 +63,13 @@ input[type=radio]
     border: 2px solid white;
     transition: 0.2s all linear;
     outline: none;
-    margin-bottom: -2px;
+
+    margin: 0 70px;
 }
 
 input[type=radio]:checked
 {
-    border: 5px solid white;
+    background: white;
 }
 
 input[type=range]
@@ -71,8 +77,8 @@ input[type=range]
     background: transparent;
     height: 23px;
     -webkit-appearance: none;
-    margin: 10px 0;
-    width: 360px;
+    margin: 0;
+    width: 500px;
 }
 
 input[type=range]:focus
