@@ -13,39 +13,71 @@ function init()
 
 //region Sounds
 
+class Sound
+{
+    constructor(context, key, type, frequency)
+    {
+        this.context = context;
+        this.key = key;
+        this.type = type;
+        this.frequency = frequency;
+    }
+
+    start()
+    {
+        this.oscillator = this.context.createOscillator();
+        this.gain = this.context.createGain();
+        this.oscillator.type = this.type;
+        this.oscillator.frequency.value = this.frequency;
+
+        this.oscillator.connect(this.gain);
+        this.gain.connect(this.context.destination);
+        this.oscillator.start();
+    }
+
+    stop()
+    {
+        this.gain.gain.exponentialRampToValueAtTime(0.00001, this.context.currentTime + 1);
+    }
+
+    clear()
+    {
+        this.oscillator.stop();
+        this.gain.disconnect(this.context.destination);
+        this.oscillator.disconnect(this.gain);
+
+        this.oscillator = null;
+    }
+}
 
 let soundIndex = []; // this is a dictionary which to each keycode (key) associates a sound object (value)
 
 function soundInit()
 {
-    addSoundToIndex(32, "sine", 261.6); // This is a C note played on every spacebar press
+    addSoundToIndex(32, new Sound(context, 32, "sine", 261.6)); // This is a C note played on every spacebar press
 }
 
-function addSoundToIndex(key, type, frequency)
+function addSoundToIndex(key, sound)
 {
-    soundIndex[key] = createSound(type, frequency);
-    console.log(soundIndex);
+    soundIndex[key] = sound; // This is a C note played on every spacebar press
 }
 
-//endregion
-
-//region Player
-
-function playSound(key)
-{
+function playSound(key) {
     if (key in soundIndex) {
-        soundIndex[key].connect(context.destination);
         soundIndex[key].start();
     }
 }
 
-function stopSound(key)
-{
+function stopSound(key) {
     if (key in soundIndex) {
         soundIndex[key].stop();
-        soundIndex[key].disconnect(context.destination);
     }
 }
+
+
+//endregion
+
+//region Player
 
 /*
 let context;
@@ -88,15 +120,27 @@ function keyInit() {
     document.addEventListener('keyup', handleKeyup);
 }
 
+let pressedKeys = [];
+
 function handleKeydown(event) {
-    playSound(event.keyCode);
+    let key = event.keyCode; // TODO change because of deprecation
+
+    if (!pressedKeys.includes(key)) {
+        pressedKeys.push(key);
+        playSound(key);
+    }
 }
 
 function handleKeyup(event) {
-    stopSound(event.keyCode);
+    let key = event.keyCode; // TODO change because of deprecation
+
+    if (pressedKeys.includes(key)) {
+        stopSound(key);
+        pressedKeys.pop(key);
+    }
 }
 
-function getKey(event) {
+/*function getKey(event) {
     let key;
 
     if (event.key !== undefined)
@@ -113,7 +157,7 @@ function getKey(event) {
     }
 
     return key;
-}
+}*/
 
 //endregion
 
