@@ -29,13 +29,13 @@ class Sound
         this.frequency = frequency;
     }
 
-    start(offset)
+    start()
     {
         this.oscillator = this.context.createOscillator();
         this.gain = this.context.createGain();
-        this.gain.gain.value = 0.1;
+        this.gain.gain.value = 0.2;
         this.oscillator.type = this.type;
-        this.oscillator.frequency.value = this.frequency + offset;
+        this.oscillator.frequency.value = this.frequency;
         this.detune(getTune());
 
         this.oscillator.connect(this.gain);
@@ -76,25 +76,53 @@ class Sound
     }
 }
 
+let frequencyIndex = [];
 let soundIndex = []; // this is a dictionary which to each keycode (key) associates a sound object (value)
 
 function soundInit()
 {
-    addSoundToIndex(32, new Sound("sine", 261.6)); // -
-    addSoundToIndex(67, new Sound("sine", 293.665)); // C
-    addSoundToIndex(86, new Sound("sine", 349.228)); // V
-    addSoundToIndex(66, new Sound("sine", 440)); // B
+    // Num keys
+    addFrequencyToIndex(222, 261.63);
+    addFrequencyToIndex(49, 277.18);
+    addFrequencyToIndex(50, 293.66);
+    addFrequencyToIndex(51, 311.13);
+    addFrequencyToIndex(52, 329.63);
+    addFrequencyToIndex(53, 349.23);
+    addFrequencyToIndex(54, 369.99);
+    addFrequencyToIndex(55, 392);
+    addFrequencyToIndex(56, 415.30);
+    addFrequencyToIndex(57, 440);
+    addFrequencyToIndex(48, 466.16);
+    addFrequencyToIndex(219, 493.88);
+    addFrequencyToIndex(187, 523.25);
+
+
+    generateSounds();
+}
+
+function generateSounds() {
+    frequencyIndex.forEach(function(frequency)
+    {
+        let key = frequencyIndex.indexOf(frequency);
+        let sound = new Sound(getType(), frequency);
+        addSoundToIndex(key, sound);
+    });
+}
+
+function addFrequencyToIndex(key, frequency)
+{
+    frequencyIndex[key] = frequency;
 }
 
 function addSoundToIndex(key, sound)
 {
-    soundIndex[key] = sound; // This is a C note played on every spacebar press
+    soundIndex[key] = sound;
 }
 
-function playSound(key, offset)
+function playSound(key)
 {
     if (key in soundIndex) {
-        soundIndex[key].start(offset);
+        soundIndex[key].start();
     }
 }
 
@@ -121,33 +149,15 @@ function handleKeydown(event)
 {
     let key = event.keyCode; // TODO change because of deprecation
 
-    if (!soundIndex[key] == undefined) {
+    if (key in soundIndex) {
         event.preventDefault();
     }
 
     if (!pressedKeys.includes(key))
     {
         pressedKeys.push(key);
-        let offset = 0;
 
-        if (pressedKeys.includes(37)) // Left arrow
-        {
-            offset -= 10;
-        }
-        if (pressedKeys.includes(38)) // Up arrow
-        {
-            offset += 20;
-        }
-        if (pressedKeys.includes(39)) // Right arrow
-        {
-            offset += 10;
-        }
-        if (pressedKeys.includes(40)) // Down arrow
-        {
-            offset -= 20;
-        }
-
-        playSound(key, offset);
+        playSound(key);
     }
 }
 
@@ -166,9 +176,9 @@ function handleKeyup(event) {
 
 function changeInit()
 {
-    document.getElementById("type").addEventListener("change", typeChange);
-    document.getElementById("tune").addEventListener("change", tuneChange);
-    document.getElementById("echo").addEventListener("change", echoChange);
+    document.getElementById("type").addEventListener("input", typeChange);
+    document.getElementById("tune").addEventListener("input", tuneChange);
+    document.getElementById("echo").addEventListener("input", echoChange);
 }
 
 function typeChange()
