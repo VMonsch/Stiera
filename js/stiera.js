@@ -94,6 +94,7 @@ function soundInit()
     addFrequencyToIndex(57, 440);
     addFrequencyToIndex(48, 466.16);
     addFrequencyToIndex(219, 493.88);
+    addFrequencyToIndex(189, 493.88); //mac
     addFrequencyToIndex(187, 523.25);
 
 
