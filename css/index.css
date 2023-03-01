@@ -14,28 +14,34 @@ body
     animation: Gradient 15s ease infinite;
 }
 
-body, h1
+h1
 {
-    font-family: "Segoe UI", sans-serif;
-    font-weight: 300;
+    font-family: Allura, cursive;
+    font-size: 10rem;
 }
 
 .top
 {
     position: absolute;
     top: 2%;
+    z-index: 2;
 }
 
 .middle
 {
     position: absolute;
-    top: 45%;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    line-height: 100vh;
+    z-index: 1;
 }
 
 .bottom
 {
     position: absolute;
     top: 92%;
+    z-index: 2;
 }
 
 .centered

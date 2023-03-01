@@ -2,6 +2,7 @@
 <html>
     <head>
         <link rel="shortcut icon" type="image/png" href="resources/images/vaporsun.gif"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allura">
         <link rel="stylesheet" type="text/css" href="css/index.css">
         <script src="js/stiera.js"></script>
         <title>Stiera</title>
@@ -10,25 +11,25 @@
     </head>
     <body>
         <div id="type" class="top centered">
-            <input type="radio" id="sine" name="type" value="sine" checked />
+            <input title="Sine" type="radio" id="sine" name="type" value="sine" checked />
             <!--<label for="sine">Sine</label>-->
-            <input type="radio" id="square" name="type" value="square" />
+            <input title="Square" type="radio" id="square" name="type" value="square" />
             <!--<label for="square">Square</label>-->
             <!--<input type="radio" id="custom" name="type" value="custom" />-->
             <!--<label for="custom">Custom</label>-->
-            <input type="radio" id="triangle" name="type" value="triangle" />
+            <input title="Triangle" type="radio" id="triangle" name="type" value="triangle" />
             <!--<label for="triangle">Triangle</label>-->
-            <input type="radio" id="sawtooth" name="type" value="sawtooth" />
+            <input title="Sawtooth" type="radio" id="sawtooth" name="type" value="sawtooth" />
             <!--<label for="sawtooth">Sawtooth</label>-->
         </div>
         <h1 id="title" class="middle centered">Stiera</h1>
         <div id="range" class="bottom centered">
             <div>
             <!--<label for="tune">Tune</label>-->
-            <input type="range" id="tune" min="-2000" max="2000" value="0" step="10" />
+            <input title="Tune" type="range" id="tune" min="-2000" max="2000" value="0" step="10" />
             </div>
             <div>
-            <input type="range" id="echo" min="0" max="5" value="2.5" step="0.01" />
+            <input title="Echo" type="range" id="echo" min="0" max="5" value="2.5" step="0.01" />
             <!--<label for="echo">Echo</label>-->
             </div>
         </div>
